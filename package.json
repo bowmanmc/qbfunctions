@@ -1,0 +1,24 @@
+{
+  "name": "qbfunctions",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dist": "node tools/dist.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bowmanmc/qbfunctions.git"
+  },
+  "author": "Michael Bowman <bowmanmc@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/bowmanmc/qbfunctions/issues"
+  },
+  "homepage": "https://github.com/bowmanmc/qbfunctions#readme",
+  "dependencies": {
+    "archiver": "^1.3.0",
+    "mkdirp": "^0.5.1",
+    "zip-folder": "^1.0.0"
+  }
+}
