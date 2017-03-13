@@ -10,12 +10,26 @@
 'use strict';
 const moment = require('moment');
 
+const MailQueue = require('./models/mailqueue');
+
 
 exports.handler = (event, context, callback) => {
 
-    let dayStr = moment().format('YYYY-MM-DD');
+    let dayStr = moment().format('YYYY/MM/DD');
 
     console.log('Processing mail for day ' + dayStr);
 
-    callback(null, 'Executed mailer lambda.');
+    MailQueue.where('deliveron', dayStr).fetchAll().then(function(queue) {
+        console.log('Got ' + queue.length + ' items from the mail queue');
+
+        queue.map(function(item) {
+            console.log('    processing mail queue item: ' + JSON.stringify(item));
+        });
+
+        // handler is finished!
+        callback('Executed mailer lambda.');
+    }).catch(function(err) {
+        console.error('Error processing mail queue!', err);
+        callback('Error processing mail queue!');
+    });
 };
