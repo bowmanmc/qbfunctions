@@ -7,9 +7,14 @@
  *       - Send Email
  *       - Record success or errors
  */
+const moment = require('moment');
+
+
 exports.handler = (event, context, callback) => {
 
-    console.log('Hello from the console ' + event['name']);
-    callback(null, 'Hello from Lambda ' + event['name']);
+    let dayStr = moment().format('YYYY-MM-DD');
 
+    console.log(`Processing mail for day ${dayStr}`);
+
+    callback(null, 'Executed mailer lambda.');
 };
