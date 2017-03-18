@@ -8,6 +8,7 @@
  *       - Record success or errors
  */
 'use strict';
+const AWS = require('aws-sdk');
 const moment = require('moment');
 const Promise = require('bluebird');
 const request = require('request');
@@ -18,11 +19,45 @@ const MailQueue = require('./models/mailqueue');
 
 function processQueueItem(item) {
     const deferred = Promise.pending();
-    console.log('    processing mail queue item: ' + JSON.stringify(item));
     // Read template from S3
+    console.log('Retrieving template from S3: ' + item.template);
     request(item.template, function(err, response, body) {
         console.log('Sending ' + item.template + ' to ' + item.studentemail);
-        deferred.resolve();
+
+        let ses = new AWS.SES({
+            accessKeyId: awsConfig.accessKeyId,
+            secretAccessKey: awsConfig.secretAccessKey,
+            region: awsConfig.region
+        });
+
+        let emailParams = {
+            Destination: {
+                ToAddresses: [item.studentemail]
+            },
+            Message: {
+                Body: {
+                    Html: {
+                        Data: body,
+                        Charset: 'utf8'
+                    }
+                },
+                Subject: {
+                    Data: 'Quickbits Daily Lesson'
+                }
+            },
+            Source: 'bowmanmc@gmail.com'
+        };
+
+        ses.sendEmail(emailParams, function(err, data) {
+            if (err) {
+                console.log(err.message, err.stack);
+            }
+            else {
+                console.log('Email sent!!!');
+                console.log('Data: ' + JSON.stringify(data));
+            }
+            deferred.resolve();
+        });
     });
     return deferred.promise;
 }
